@@ -1,5 +1,7 @@
 #import "Settings.h"
 
+extern "C" NSUserDefaults *tweakDefaults;
+
 %hook _TtC6Twitch25AppSettingsViewController
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath {
   if (indexPath.row == [self tableView:tableView numberOfRowsInSection:indexPath.section] - 1)
@@ -30,13 +32,5 @@
 %end
 
 %ctor {
-  NSUserDefaults *userDefaults = NSUserDefaults.standardUserDefaults;
-  if (![userDefaults objectForKey:@"TWAdBlockEnabled"])
-    [userDefaults setBool:YES forKey:@"TWAdBlockEnabled"];
-  if (![userDefaults objectForKey:@"TWAdBlockProxy"])
-    [userDefaults setObject:PROXY_URL forKey:@"TWAdBlockProxy"];
-  if (![userDefaults objectForKey:@"TWAdBlockProxyEnabled"])
-    [userDefaults setBool:NO forKey:@"TWAdBlockProxyEnabled"];
-  if (![userDefaults objectForKey:@"TWAdBlockCustomProxyEnabled"])
-    [userDefaults setBool:NO forKey:@"TWAdBlockCustomProxyEnabled"];
+  if (![NSProcessInfo.processInfo.processName isEqualToString:@"mediaserverd"]) %init;
 }
